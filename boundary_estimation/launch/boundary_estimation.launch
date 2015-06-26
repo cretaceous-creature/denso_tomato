@@ -1,0 +1,4 @@
+<launch>
+  <node name = "tomato_detection" pkg = "boundary_estimation" type = "driver" output = "screen">
+  </node>
+</launch>
