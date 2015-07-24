@@ -5,16 +5,29 @@
 ### build
 
 ```
-catkin build tomato_seg
-catkin build rgbtocloud
+roscd
+cd ..
+catkin_make --force-cmake --only-pkg-with-deps rgbtocloud tomato_seg pose_reasoning
+
 ```
 
 ### run
 
 ```
-roslaunch tomato_seg tomato.launch
+roslaunch tomato_detect tomato.launch  //filter and segmentation
+rosrun pose_reasoning pose_reasoning   // reasoning to get the pose
 ```
 
+Hrp2w related:
+
+rosrun roseus roseus
+
+(load "cut-tomato.l")
+
+### Operation
+
+I will write an operation methods later....
+Operation is easy, but calibration need time...
 
 ## boundary_estimation
 

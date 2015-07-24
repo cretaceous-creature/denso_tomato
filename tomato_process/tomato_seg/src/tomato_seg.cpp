@@ -28,6 +28,7 @@ void keyboardEvent(const pcl::visualization::KeyboardEvent &event, void *)
 
     if(event.keyUp())
     {
+
         switch(event.getKeyCode())
         {
         //send cutting information to euslisp
@@ -216,16 +217,16 @@ int main(int argc, char **argv)
         if(pub_flag)
             pub.publish(cloud_msg);
 
-        try{
-            listener.lookupTransform(
-                        "/camera_rgb_optical_frame",
-                        "/cxy/camera1_rgb_optical_frame",
-                        ros::Time(0), transform);
-        }
-        catch (tf::TransformException &ex) {
-            ros::Duration(0.1).sleep();
-            continue;
-        }
+//        try{
+//            listener.lookupTransform(
+//                        "/camera_rgb_optical_frame",
+//                        "/cxy/camera1_rgb_optical_frame",
+//                        ros::Time(0), transform);
+//        }
+//        catch (tf::TransformException &ex) {
+//            ros::Duration(0.1).sleep();
+//            continue;
+//        }
         HandeyetoCamera = transform * tf::Transform::getIdentity();
         ros::spinOnce();
         r.sleep();
