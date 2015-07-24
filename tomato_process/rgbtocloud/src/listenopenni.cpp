@@ -22,6 +22,7 @@ void tf_transmit(float x, float y, float z)
 {
     static tf::TransformBroadcaster br;
     tf::Transform transform;
+
     transform.setOrigin( tf::Vector3(x, y, z) );
     tf::Quaternion q;
     q.setRPY(0, 0, 0);
@@ -331,10 +332,10 @@ int main(int argc, char **argv)
         tf::StampedTransform transform,transformhandeye;
         ros::spinOnce();
         try{
-            listener.lookupTransform(
-                        "/camera_rgb_optical_frame",
-                        "/cxy/camera1_rgb_optical_frame",
-                        ros::Time(0), transformhandeye);
+            //listener.lookupTransform(
+            //            "/camera_rgb_optical_frame",
+            //            "/cxy/camera1_rgb_optical_frame",
+             //           ros::Time(0), transformhandeye);
 
             listener.lookupTransform(
                         "/BODY",
