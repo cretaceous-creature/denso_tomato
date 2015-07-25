@@ -25,9 +25,11 @@ rosrun roseus roseus
 (load "cut-tomato.l")
 
 ### Operation
-
-I will write an operation methods later....
-Operation is easy, but calibration need time...
+Please follow the process below, the performance cant be guaranteed due to the limitation of the algorithm and the calibration results.
+![](tuto_files/p1.png)
+![](tuto_files/p2.png)
+![](tuto_files/p3.png)
+![](tuto_files/p4.png)
 
 ## boundary_estimation
 
