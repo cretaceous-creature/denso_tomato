@@ -19,11 +19,12 @@ rosrun pose_reasoning pose_reasoning   // reasoning to get the pose
 ```
 
 Hrp2w related:
-
+```
 rosrun roseus roseus
 
 (load "cut-tomato.l")
-
+(pr)  ;;reset man-ip-pose
+```
 ### Operation
 Please follow the process below, the performance cant be guaranteed due to the limitation of the algorithm and the calibration results.
 ![](tuto_files/p1.png)
