@@ -1,0 +1,24 @@
+<package>
+  <name>tomato_cutting_demo</name>
+  <version>1.0.0</version>
+  <description>
+    tomato cutting for IROS2014
+  </description>
+  <maintainer email="xychen@jsk.imi.i.u-tokyo.ac.jp">
+    Chen Xiangyu, Krishneel Chaudhary, Yoshimaru Tanaka, Kotaro Nagahama, Hiroaki Yaguchi
+  </maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>hrpsys_ros_bridge_tutorials</build_depend>
+  <build_depend>rgbtocloud</build_depend>
+  <build_depend>tomato_seg</build_depend>
+  <build_depend>pose_reasoning</build_depend>
+
+  <run_depend>hrpsys_ros_bridge_tutorials</run_depend>
+  <run_depend>rgbtocloud</run_depend>
+  <run_depend>tomato_seg</run_depend>
+  <run_depend>pose_reasoning</run_depend>
+
+</package>
