@@ -1,0 +1,10 @@
+<launch>
+  <!-- camera -->
+  <include file="$(find jsk_pcl_ros)/launch/openni2_local.launch" />
+  <include file="$(find jsk_pcl_ros)/launch/openni2_remote.launch" />
+
+  <!-- process -->
+  <include file="$(find tomato_detect)/launch/tomato.launch" />
+  <node name="pose_reasoning" pkg="pose_reasoning" type="pose_reasoning" />
+
+</launch>
