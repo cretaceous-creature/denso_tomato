@@ -1,8 +1,16 @@
 <launch>
-   <node name="rgb" pkg="rgbtocloud" type="listener">
-</node>
-   <node name="seg" pkg="tomato_seg" type="tomato_segmentation" output="screen">
-</node>
+  <arg name="camera_root_frame" default="/BODY" />
+
+  <node name="rgbtocloud" pkg="rgbtocloud" type="listener"
+	output="screen">
+    <param name="camera_root_frame" value="$(arg camera_root_frame)" />
+  </node>
+  <node name="tomato_seg" pkg="tomato_seg" type="tomato_segmentation"
+	output="screen">
+  </node>
+  <node name="pose_reasoning" pkg="pose_reasoning" type="pose_reasoning"
+	output="screen">
+  </node>
 
 <!-- <node pkg="tf" type="static_transform_publisher" name="leap_tf" args="0 0.04 -0.02 -0.707 0 0 0.707 /lhsensor /leap_optical_frame 10">  --> 
 

@@ -305,6 +305,12 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv,"listenopenni");
     ros::NodeHandle n;
+    ros::NodeHandle np("~");
+
+    // root of camera, to estimate gravity vector
+    std::string camera_root_frame;
+    np.param<std::string>("camera_root_frame", camera_root_frame, "/BODY");
+
     // set initial parameters
     //    ParaAll    rmin rmax,(g),(b), distmin,distmax
     ros::param::param<std::string>("/MyParam",ParamAll,"90 255 0 50 0 50 0.3 1.5 100 0.01");
@@ -338,13 +344,14 @@ int main(int argc, char **argv)
              //           ros::Time(0), transformhandeye);
 
             listener.lookupTransform(
-                        "/BODY",
-                        "/camera_depth_optical_frame",
-                        ros::Time(0), transform);
+                camera_root_frame,
+                "/camera_depth_optical_frame",
+                ros::Time(0), transform);
         }
         catch (tf::TransformException &ex) {
-            ros::Duration(0.1).sleep();
-            continue;
+          ROS_ERROR("%s, skip proc...",ex.what());
+          ros::Duration(0.1).sleep();
+          continue;
         }
 
         HandeyetoCamera = transformhandeye * tf::Transform::getIdentity();
