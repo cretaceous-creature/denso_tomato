@@ -307,15 +307,15 @@ int TOMATODETECT::GetCenter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 
         pcl::getMinMax3D (*cloud_cluster, P_min, P_max);
         tmp_Coeff.values.resize(9);
-        tmp_Coeff.values[0] = P_min.x-0.02;
-        tmp_Coeff.values[1] = P_max.x+0.02;
-        tmp_Coeff.values[2] = P_min.y-0.02;
-        tmp_Coeff.values[3] = P_max.y+0.02;
-        tmp_Coeff.values[4] = P_min.z-0.02;
-        tmp_Coeff.values[5] = P_max.z+0.02;
-        tmp_Coeff.values[6] = 0.0;
-        tmp_Coeff.values[7] = 1.0;
-        tmp_Coeff.values[8] = 0.0;
+        tmp_Coeff.values[0] = P_min.x - 0.02;  // x_min
+        tmp_Coeff.values[1] = P_max.x + 0.02;  // x_max
+        tmp_Coeff.values[2] = P_min.y - 0.02;  // y_min
+        tmp_Coeff.values[3] = P_max.y + 0.02;  // y_max
+        tmp_Coeff.values[4] = P_min.z - 0.02;  // z_min
+        tmp_Coeff.values[5] = P_max.z + 0.02;  // z_max
+        tmp_Coeff.values[6] = 0.0;  // r
+        tmp_Coeff.values[7] = 1.0;  // g
+        tmp_Coeff.values[8] = 0.0;  // b
 
         float kk = DistToVector(0,0,0,centroid);
         if(min > kk){
@@ -336,8 +336,8 @@ int TOMATODETECT::GetCenter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 
     if(orderindex>0 && orderindex<=Boundingbox.size() && orderindex<=Center_vector.size()){
         index = orderindex - 1;
-        Boundingbox[index].values[6] = 1.0;
-        Boundingbox[index].values[7] = 0.0;
+        Boundingbox[index].values[6] = 1.0;  // r
+        Boundingbox[index].values[7] = 0.0;  // g
         LastCenter = Center_vector.at(index);
     }
     else
