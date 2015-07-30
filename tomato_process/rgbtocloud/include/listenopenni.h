@@ -17,6 +17,7 @@
 #include <tf/transform_listener.h>
 
 #include "jsk_recognition_msgs/BoundingBoxArray.h"
+#include "geometry_msgs/PointStamped.h"
 
 #define TrackDist 0.3
 #endif

@@ -126,6 +126,7 @@ void easytracking()
 }
 
 static int framecount = 2;
+static ros::Publisher pub_centroid;
 void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 {
 
@@ -179,6 +180,14 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
     ss<<x<<" "<<y<<" "<<z;
     std::string paramset(ss.str());
     ros::param::set("/Centroid",paramset);
+
+    geometry_msgs::PointStamped centroid_msg;
+    centroid_msg.header.frame_id = "/camera_rgb_optical_frame";
+    centroid_msg.header.stamp = ros::Time::now();
+    centroid_msg.point.x = Center[0];
+    centroid_msg.point.y = Center[1];
+    centroid_msg.point.z = Center[2];
+    pub_centroid.publish(centroid_msg);
 
     for(int i=0;i<TEST->Center_vector.size();i++){
         std::stringstream ss;
@@ -364,6 +373,8 @@ int main(int argc, char **argv)
 
     pub_bb =
         n.advertise<jsk_recognition_msgs::BoundingBoxArray>("/boxsize", 1);
+    pub_centroid =
+        n.advertise<geometry_msgs::PointStamped>("/centroid", 1);
 
     //1000 equals to the message queue
     //dont be too large or it will become slow
