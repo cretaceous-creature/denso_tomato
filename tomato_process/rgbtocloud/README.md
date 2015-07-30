@@ -1,5 +1,9 @@
 # rgbtocloud
 
+## Note
+
+This needs TF from `$(param camera_root_frame)` to `camera_depth_optical_frame`.
+
 ## I/O
 
 ### publish
@@ -12,7 +16,9 @@
 
 ### param
 
+* `~/camera_root_frame` : root frame of camera, it must be connected to `camera_depth_optical_frame`.
 * `/MyParam` : rmin, rmax, (g), (b), distmin, distmax
+* `/Boxsize`
 * `/Clusternum`
 * `/Centroid`
 * `/gvector`
