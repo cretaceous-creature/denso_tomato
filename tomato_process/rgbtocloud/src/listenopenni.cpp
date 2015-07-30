@@ -124,7 +124,9 @@ void easytracking()
     }
 
 }
-#define framecount 2
+
+static int framecount = 2;
+static ros::Publisher pub_centroid;
 void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 {
 
@@ -169,6 +171,8 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
     viewer.addLine(P1,P2,0,0,1,lineidz);
     viewer.addLine(P1,P3,0,1,0,lineidy);
     viewer.addLine(P1,P4,1,0,0,lineidx);
+
+    // publish centroid
     ostringstream ss;
     float z = Center[2];
     float y = Center[1];
@@ -177,6 +181,14 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
     std::string paramset(ss.str());
     ros::param::set("/Centroid",paramset);
 
+    geometry_msgs::PointStamped centroid_msg;
+    centroid_msg.header.frame_id = "/camera_rgb_optical_frame";
+    centroid_msg.header.stamp = ros::Time::now();
+    centroid_msg.point.x = Center[0];
+    centroid_msg.point.y = Center[1];
+    centroid_msg.point.z = Center[2];
+    pub_centroid.publish(centroid_msg);
+
     for(int i=0;i<TEST->Center_vector.size();i++){
         std::stringstream ss;
         ss << "branch" << i;
@@ -184,16 +196,16 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
         if(TEST->Boundingbox.size()>i){
             cube_coeff = TEST->Boundingbox[i];
             viewer.addCube(
-                        cube_coeff.values[0],
-                    cube_coeff.values[1],
-                    cube_coeff.values[2],
-                    cube_coeff.values[3],
-                    cube_coeff.values[4],
-                    cube_coeff.values[5],
-                    cube_coeff.values[6],
-                    cube_coeff.values[7],
-                    cube_coeff.values[8],
-                    ss.str());
+                cube_coeff.values[0],  // x_min
+                cube_coeff.values[1],  // x_max
+                cube_coeff.values[2],  // y_min
+                cube_coeff.values[3],  // y_max
+                cube_coeff.values[4],  // z_min
+                cube_coeff.values[5],  // z_max
+                cube_coeff.values[6],  // r
+                cube_coeff.values[7],  // g
+                cube_coeff.values[8],  // b
+                ss.str());
         }
     }
 
@@ -236,6 +248,7 @@ void HandEye(const sensor_msgs::PointCloud2 msg)
 
 //call back function
 static int frame_divider = 0;
+static ros::Publisher pub_bb;
 void CloudCallBack(const sensor_msgs::PointCloud2 msg)
 {
     pcl::PointCloud<pcl::PointXYZRGB> cloud;
@@ -272,16 +285,54 @@ void CloudCallBack(const sensor_msgs::PointCloud2 msg)
                 }
                 Center = TEST->Center_vector.at(index);
 
+                // publish bounding box
                 std::stringstream ss;
-                ss<< TEST->Boundingbox[index].values[0]<<" "<<
-                                                         TEST->Boundingbox[index].values[1]<<" "<<
-                                                         TEST->Boundingbox[index].values[2]<<" "<<
-                                                         TEST->Boundingbox[index].values[3]<<" "<<
-                                                         TEST->Boundingbox[index].values[4]<<" "<<
-                                                         TEST->Boundingbox[index].values[5];
+                ss <<
+                    TEST->Boundingbox[index].values[0] << " " <<  // x_min
+                    TEST->Boundingbox[index].values[1] << " " <<  // x_max
+                    TEST->Boundingbox[index].values[2] << " " <<  // y_min
+                    TEST->Boundingbox[index].values[3] << " " <<  // y_max
+                    TEST->Boundingbox[index].values[4] << " " <<  // z_min
+                    TEST->Boundingbox[index].values[5];  // z_max
                 std::string paramset(ss.str());
                 if(box_switch)
                     ros::param::set("/Boxsize",paramset);
+                
+                jsk_recognition_msgs::BoundingBoxArray jsk_bb;
+                jsk_bb.header.frame_id = msg.header.frame_id;
+                jsk_bb.header.stamp = msg.header.stamp;
+                jsk_bb.boxes.resize(1);
+
+                jsk_bb.boxes[0].header.frame_id = msg.header.frame_id;
+                jsk_bb.boxes[0].header.stamp = msg.header.stamp;
+
+                jsk_bb.boxes[0].pose.position.x =
+                    (TEST->Boundingbox[index].values[0] +
+                     TEST->Boundingbox[index].values[1]) * 0.5;
+                jsk_bb.boxes[0].pose.position.y =
+                    (TEST->Boundingbox[index].values[2] +
+                     TEST->Boundingbox[index].values[3]) * 0.5;
+                jsk_bb.boxes[0].pose.position.z =
+                    (TEST->Boundingbox[index].values[4] +
+                     TEST->Boundingbox[index].values[5]) * 0.5;
+
+                jsk_bb.boxes[0].pose.orientation.x = 0.0;
+                jsk_bb.boxes[0].pose.orientation.y = 0.0;
+                jsk_bb.boxes[0].pose.orientation.z = 0.0;
+                jsk_bb.boxes[0].pose.orientation.w = 1.0;
+
+                jsk_bb.boxes[0].dimensions.x =
+                    (TEST->Boundingbox[index].values[1] -
+                     TEST->Boundingbox[index].values[0]);
+                jsk_bb.boxes[0].dimensions.y =
+                    (TEST->Boundingbox[index].values[3] -
+                     TEST->Boundingbox[index].values[2]);
+                jsk_bb.boxes[0].dimensions.z =
+                    (TEST->Boundingbox[index].values[5] -
+                     TEST->Boundingbox[index].values[4]);
+
+                pub_bb.publish(jsk_bb);
+
             }
             //now we got the center
             //CLOUDviewer.runOnVisualizationThreadOnce(viewerOneOff);
@@ -319,6 +370,12 @@ int main(int argc, char **argv)
     ros::param::set("/Clusternum","1");
     ros::param::set("/gvector","0.0 0.0 2.0 0.0 1.0 2.45");
     PCLviewer = rgbVis();
+
+    pub_bb =
+        n.advertise<jsk_recognition_msgs::BoundingBoxArray>("/boxsize", 1);
+    pub_centroid =
+        n.advertise<geometry_msgs::PointStamped>("/centroid", 1);
+
     //1000 equals to the message queue
     //dont be too large or it will become slow
     ros::Subscriber sub = n.subscribe("/camera_remote/depth_registered/points",1,CloudCallBack);
