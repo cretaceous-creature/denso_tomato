@@ -124,7 +124,8 @@ void easytracking()
     }
 
 }
-#define framecount 2
+
+static int framecount = 2;
 void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 {
 
