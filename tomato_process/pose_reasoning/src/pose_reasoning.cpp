@@ -99,8 +99,11 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> rgbVis ()
     viewer->registerKeyboardCallback(keyboardEvent);
     return (viewer);
 }
+
 static Eigen::Vector4f Center;
 static std::string tomatoid[10]; //at most 10 sample
+static ros::Publisher pub_pedicels;
+
 void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 {
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
@@ -194,7 +197,56 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
 
         }
 
+    // publish marker
+    visualization_msgs::Marker pedicels_marker;
+    pedicels_marker.header.frame_id = "/camera_rgb_optical_frame";
+    pedicels_marker.header.stamp = ros::Time::now();
+    pedicels_marker.ns = "tomato_pedicels";
+    pedicels_marker.id = 0;
+    pedicels_marker.type = visualization_msgs::Marker::LINE_LIST;
+    pedicels_marker.action = visualization_msgs::Marker::ADD;
+    pedicels_marker.pose.position.x = 0.0;
+    pedicels_marker.pose.position.y = 0.0;
+    pedicels_marker.pose.position.z = 0.0;
+    pedicels_marker.pose.orientation.x = 0.0;
+    pedicels_marker.pose.orientation.y = 0.0;
+    pedicels_marker.pose.orientation.z = 0.0;
+    pedicels_marker.pose.orientation.w = 1.0;
+    pedicels_marker.scale.x = 0.005;
+    pedicels_marker.scale.y = 1.0;
+    pedicels_marker.scale.z = 1.0;
+    pedicels_marker.color.a = 0.5;
+    pedicels_marker.color.r = 0.0;
+    pedicels_marker.color.g = 1.0;
+    pedicels_marker.color.b = 0.0;
 
+    for(int i = 0; i < (TEST->Tomato_model.size() > 10 ? 10 : TEST->Tomato_model.size()); i++) {
+      if (TEST->Tomato_model[0].BV.size() > 1) {
+        double r = TEST->Tomato_model[i].Modelcoeff.values[3];
+        double x1 = TEST->Tomato_model[i].Modelcoeff.values[0];
+        double x2 = x1 +
+            (r + cutting_dist) * TEST->Tomato_model[i].Pedicel_e.vector.x;
+        double y1 = TEST->Tomato_model[i].Modelcoeff.values[1];
+        double y2 = y1 +
+            (r + cutting_dist) * TEST->Tomato_model[i].Pedicel_e.vector.y;
+        double z1 = TEST->Tomato_model[i].Modelcoeff.values[2];
+        double z2 = z1 +
+            (r + cutting_dist) * TEST->Tomato_model[i].Pedicel_e.vector.z;
+
+        geometry_msgs::Point geom_point1;
+        geom_point1.x = x1;
+        geom_point1.y = y1;
+        geom_point1.z = z1;
+        geometry_msgs::Point geom_point2;
+        geom_point2.x = x2;
+        geom_point2.y = y2;
+        geom_point2.z = z2;
+        pedicels_marker.points.push_back(geom_point1);
+        pedicels_marker.points.push_back(geom_point2);    
+      }
+    }
+
+    pub_pedicels.publish(pedicels_marker);
 
     //draw box
     std::stringstream ss;
@@ -339,6 +391,10 @@ int main(int argc, char **argv)
     ros::init(argc, argv,"reason_pose");
     ros::NodeHandle n;
     PCLviewer = rgbVis();
+
+    pub_pedicels =
+        n.advertise<visualization_msgs::Marker>("/tomato_pedicels", 1);
+
     //1000 equals to the message queue
     //dont be too large or it will become slow
     ros::Subscriber sub = n.subscribe("branchcloud",1,CloudCallBack);

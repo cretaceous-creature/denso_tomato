@@ -4,6 +4,7 @@
 
 ### publish
 
+* `/tomato_pedicels (visualization_msgs/Marker)`
 
 ### subscribe
 
