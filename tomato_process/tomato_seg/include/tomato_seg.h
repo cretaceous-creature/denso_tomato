@@ -15,4 +15,7 @@
 #include <pcl/common/common_headers.h>
 #include <tf/transform_listener.h>
 
+#include "visualization_msgs/MarkerArray.h"
+#include "visualization_msgs/Marker.h"
+
 #endif

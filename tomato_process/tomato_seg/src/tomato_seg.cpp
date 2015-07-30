@@ -60,6 +60,7 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> rgbVis ()
 }
 static Eigen::Vector4f Center;
 static std::string tomatoid[10]; //at most 10 sample
+static ros::Publisher pub_sphere;
 void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 {
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
@@ -69,9 +70,14 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
     viewer.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
     viewer.removeAllShapes();
 
-    ostringstream os;
 
+    // publish sphere
+    visualization_msgs::MarkerArray fruits_markers;
+    ros::Time tm_now = ros::Time::now();
+
+    ostringstream os;
     os<<TEST->Tomato_model.size();
+
     //draw the segmented tomatoes
     for(int i=0;i<(TEST->Tomato_model.size()>10?10:TEST->Tomato_model.size())
         ;i++){
@@ -85,9 +91,34 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
         zt = TEST->Tomato_model[i].ModelCoeff.values[2];
         radius = TEST->Tomato_model[i].ModelCoeff.values[3];
         os<<" "<<xt<<" "<<yt<<" "<<zt<<" "<<radius;
+
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "/camera_rgb_optical_frame";
+        marker.header.stamp = tm_now;
+        marker.ns = "tomato_fruites";
+        marker.id = i;
+        marker.type = visualization_msgs::Marker::SPHERE;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = xt;
+        marker.pose.position.y = yt;
+        marker.pose.position.z = zt; 
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = radius * 2.0;
+        marker.scale.y = radius * 2.0;
+        marker.scale.z = radius * 2.0;
+        marker.color.a = 0.5;
+        marker.color.r = 1.0;
+        marker.color.g = 0.0;
+        marker.color.b = 0.0;
+        fruits_markers.markers.push_back(marker);
     }
     std::string paramset(os.str());
     ros::param::set("/tomatocoeff",paramset);
+    pub_sphere.publish(fruits_markers);
+
     //draw box
     std::stringstream ss;
     ss << "branch";
@@ -196,6 +227,9 @@ int main(int argc, char **argv)
     PCLviewer = rgbVis();
     //1000 equals to the message queue
     //dont be too large or it will become slow
+
+    pub_sphere =
+        n.advertise<visualization_msgs::MarkerArray>("/tomato_fruits", 1);
 
     ros::Subscriber sub = n.subscribe("/camera_remote/depth_registered/points",1,CloudCallBack);
     ros::Subscriber sub1  = n.subscribe("/camera1_remote/depth_registered/points",1,HandEye);

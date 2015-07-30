@@ -5,6 +5,7 @@
 ### publish
 
 * `/branchcloud (sensor_msgs/Pointcloud2)`
+* `/tomato_fruites (visualization_msgs/MarkerArray)`
 
 ### subscribe
 
@@ -18,6 +19,7 @@
 * `/SSegment`
 * `/colorseg`
 * `/Boxsize`
+* `/tomatocoeff`
 
 
 ### tf
