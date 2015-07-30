@@ -239,6 +239,7 @@ void HandEye(const sensor_msgs::PointCloud2 msg)
 
 //call back function
 static int frame_divider = 0;
+static ros::Publisher pub_bb;
 void CloudCallBack(const sensor_msgs::PointCloud2 msg)
 {
     pcl::PointCloud<pcl::PointXYZRGB> cloud;
@@ -287,6 +288,42 @@ void CloudCallBack(const sensor_msgs::PointCloud2 msg)
                 std::string paramset(ss.str());
                 if(box_switch)
                     ros::param::set("/Boxsize",paramset);
+                
+                jsk_recognition_msgs::BoundingBoxArray jsk_bb;
+                jsk_bb.header.frame_id = msg.header.frame_id;
+                jsk_bb.header.stamp = msg.header.stamp;
+                jsk_bb.boxes.resize(1);
+
+                jsk_bb.boxes[0].header.frame_id = msg.header.frame_id;
+                jsk_bb.boxes[0].header.stamp = msg.header.stamp;
+
+                jsk_bb.boxes[0].pose.position.x =
+                    (TEST->Boundingbox[index].values[0] +
+                     TEST->Boundingbox[index].values[1]) * 0.5;
+                jsk_bb.boxes[0].pose.position.y =
+                    (TEST->Boundingbox[index].values[2] +
+                     TEST->Boundingbox[index].values[3]) * 0.5;
+                jsk_bb.boxes[0].pose.position.z =
+                    (TEST->Boundingbox[index].values[4] +
+                     TEST->Boundingbox[index].values[5]) * 0.5;
+
+                jsk_bb.boxes[0].pose.orientation.x = 0.0;
+                jsk_bb.boxes[0].pose.orientation.y = 0.0;
+                jsk_bb.boxes[0].pose.orientation.z = 0.0;
+                jsk_bb.boxes[0].pose.orientation.w = 1.0;
+
+                jsk_bb.boxes[0].dimensions.x =
+                    (TEST->Boundingbox[index].values[1] -
+                     TEST->Boundingbox[index].values[0]);
+                jsk_bb.boxes[0].dimensions.y =
+                    (TEST->Boundingbox[index].values[3] -
+                     TEST->Boundingbox[index].values[2]);
+                jsk_bb.boxes[0].dimensions.z =
+                    (TEST->Boundingbox[index].values[5] -
+                     TEST->Boundingbox[index].values[4]);
+
+                pub_bb.publish(jsk_bb);
+
             }
             //now we got the center
             //CLOUDviewer.runOnVisualizationThreadOnce(viewerOneOff);
@@ -324,6 +361,10 @@ int main(int argc, char **argv)
     ros::param::set("/Clusternum","1");
     ros::param::set("/gvector","0.0 0.0 2.0 0.0 1.0 2.45");
     PCLviewer = rgbVis();
+
+    pub_bb =
+        n.advertise<jsk_recognition_msgs::BoundingBoxArray>("/boxsize", 1);
+
     //1000 equals to the message queue
     //dont be too large or it will become slow
     ros::Subscriber sub = n.subscribe("/camera_remote/depth_registered/points",1,CloudCallBack);
