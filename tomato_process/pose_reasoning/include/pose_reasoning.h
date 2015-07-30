@@ -14,4 +14,7 @@
 #include <modeling.h>
 #include <pcl/common/common_headers.h>
 
+#include "visualization_msgs/Marker.h"
+#include "geometry_msgs/Point.h"
+
 #endif

@@ -5,7 +5,7 @@ set(CMAKE_BUILD_TYPE Debug)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS pcl_ros pcl_conversions roscpp rospy std_msgs genmsg sensor_msgs)
+find_package(catkin REQUIRED COMPONENTS pcl_ros pcl_conversions roscpp rospy std_msgs genmsg sensor_msgs visualization_msgs)
 
 find_package(PCL REQUIRED)
 find_package(PCL 1.7 REQUIRED)
