@@ -8,6 +8,8 @@ This needs TF from `$(param camera_root_frame)` to `camera_depth_optical_frame`.
 
 ### publish
 
+* `/boxsize (jsk_recognition_msgs/BoundingBoxArray)`
+* `/centroid (geometry_msgs/PoseStamped)`
 
 ### subscribe
 
