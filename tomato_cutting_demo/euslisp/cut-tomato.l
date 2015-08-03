@@ -102,8 +102,8 @@
     (send *tomato-up* :rotate theta-pitch :y)
     
     ;;no need to look
-    (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
-    (objects (list *hrp2w* *tomato-up* *tomato-pedicel*))
+    ;; (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
+    ;; (objects (list *hrp2w* *tomato-up* *tomato-pedicel*))
     ;; (send-reset-manip-pose :time 3000)
     (send-angle-vector :time 3000)
 
@@ -180,6 +180,8 @@
       )
      )
 
+    (objects (list *hrp2w* *tomato-up* *tomato-pedicel*
+		   *approach-target* *cut-target*))
     ;;first approach-target
     (send *hrp2w* arm :inverse-kinematics *approach-target*
 	  :rotation-axis t :debug-view t :torso t
