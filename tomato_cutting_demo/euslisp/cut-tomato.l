@@ -127,44 +127,58 @@
       (format t ";; cannot harvest: pedicel angle too deep.~%")
       (return-from move-to-tomato nil))
 
-    (setq *ik-target* (send *tomato-up* :copy-coords))
+    (setq *approach-target* (send *tomato-up* :copy-coords)
+	  *pedicel-target* (send *tomato-pedicel* :copy-coords)
+	  *cut-target* (make-coords))
 
     (cond
      (singletomatop
-      (send *tomato-up* :rotate (/ pi 4) :z)
-      (send *tomato-up* :rotate (/ pi 8) :y)
-      (send *tomato-up* :locate (float-vector -25 0 10))
-      (setq *ik-target* (send *tomato-up* :copy-coords))
-      (send *ik-target* :locate (float-vector -140 -15 36))
+      (send *approach-target* :rotate (/ pi 4) :z)
+      (send *approach-target* :rotate (/ pi 8) :y)
+      ;; considering pedicel
+      (send *approach-target* :locate (float-vector -25 0 10))
+      (send *approach-target* :locate (float-vector -140 -15 36))
       )
      ((eq arm :rarm)
       ;; because of robot   we cant handle all the situation
       (if (> (abs theta-yaw) (/ pi 1.3))
-	  (send *tomato-up* :rotate (/ -pi 1.4) :z)
-	(send *tomato-up* :rotate (/ -pi 2.6) :z))
-      (setq *ik-target* (send *tomato-up* :copy-coords))
+	  (send *approach-target* :rotate (/ -pi 1.4) :z)
+	(send *approach-target* :rotate (/ -pi 2.6) :z))
       ;;then transform to the center...
-      (send *tomato-pedicel* :translate (scale -0.5 vec))
-      (send *ik-target* :replace-pos
-	    (send *tomato-pedicel* :copy-pos))
-      (send *tomato-pedicel* :locate (float-vector 20 5 0))
-      (send *ik-target* :locate (float-vector -140 -15 36))
+      (send *pedicel-target* :translate (scale -0.5 vec))
+      (send *approach-target* :replace-pos
+	    (send *pedicel-target* :copy-pos))
+      (send *pedicel-target* :locate (float-vector 20 5 0))
+      (send *approach-target* :locate (float-vector -140 -15 36))
       )
      ((eq arm :larm)
       (if (> (abs theta-yaw) (/ pi 1.3))
-	  (send *tomato-up* :rotate (/ pi 1.4) :z)
-	(send *tomato-up* :rotate (/ pi 2.6) :z))
-      (setq *ik-target* (send *tomato-up* :copy-coords))
-      (send *tomato-pedicel* :translate (scale -0.5 vec))
-      (send *ik-target* :replace-pos
-	    (send *tomato-pedicel* :copy-pos))
-      (send *tomato-pedicel* :locate (float-vector 20 -5 0))
-      (send *ik-target* :locate (float-vector -140 35 45))
+	  (send *approach-target* :rotate (/ pi 1.4) :z)
+	(send *approach-target* :rotate (/ pi 2.6) :z))
+      (send *pedicel-target* :translate (scale -0.5 vec))
+      (send *approach-target* :replace-pos
+	    (send *pedicel-target* :copy-pos))
+      (send *pedicel-target* :locate (float-vector 20 -5 0))
+      (send *approach-target* :locate (float-vector -140 35 45))
       )
      )
 
-    ;;first ik-target
-    (send *hrp2w* arm :inverse-kinematics *ik-target*
+    (setq *cut-target* (send *approach-target* :copy-worldcoords))
+    (send *cut-target* :replace-pos (send *pedicel-target* :copy-pos))
+    (cond
+     (singletomatop
+      (send *cut-target* :locate (float-vector -115 -5 35))
+      )
+     ((eq arm :rarm)
+      (send *cut-target* :locate (float-vector -115 -15 35))
+      )
+     ((eq arm :larm)
+      (send *cut-target* :locate (float-vector -118 40 45))
+      )
+     )
+
+    ;;first approach-target
+    (send *hrp2w* arm :inverse-kinematics *approach-target*
 	  :rotation-axis t :debug-view t :torso t
 	  :link-list (send *hrp2w* :link-list
 			   (send *hrp2w* arm :end-coords :parent)
@@ -178,7 +192,7 @@
       (cond
        ;;execution
        ((equal key-input "x")
-	(move-ik *ik-target* :arm arm)
+	(move-ik *approach-target* :arm arm)
 	) 
 
        ;; move-hand-vi   adjusting, the maybe error
@@ -192,14 +206,14 @@
 
        ;; cutting tomatoes, if success, should reset-pose
        ((equal key-input "c")
-	(if (>= theta-yaw 0)
+	(if (eq arm :rarm)
 	    (start-cut)
 	  (start-left-cut)
 	  )
 	)
 
        ((equal key-input "s")
-	(if (>= theta-yaw 0)
+	(if (eq arm :rarm)
 	    (stop-cut)
 	  (stop-left-cut)
 	  )
@@ -215,19 +229,7 @@
 
        ;;next we move to pedicel pos  only pos, rot do no change
        ((equal key-input "g")
-	(send *ik-target* :replace-pos (send *tomato-pedicel* :copy-pos))
-	(cond
-	 (singletomatop
-	  (send *ik-target* :locate (float-vector -115 -5 35))
-	  )
-	 ((eq arm :rarm)
-	  (send *ik-target* :locate (float-vector -115 -15 35))
-	  )
-	 ((eq arm :larm)
-	  (send *ik-target* :locate (float-vector -118 40 45))
-	  )
-	 )
-	(move-ik *ik-target* :arm arm :time 2000)
+	(move-ik *cut-target* :arm arm :time 2000)
 	)
        )
       )  ;; while loop
