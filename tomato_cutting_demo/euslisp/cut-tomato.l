@@ -26,6 +26,7 @@
 	    :link-list (send *hrp2w* :link-list
 			     (send *hrp2w* arm :end-coords :parent)
 			     (car (send *hrp2w* :torso :links))))
+    (send *hrp2w* :head :look-at (send co :worldpos))
     (send-angle-vector :time time)
     )
   (send *irtviewer* :draw-objects)
@@ -102,7 +103,7 @@
     (send *tomato-up* :rotate theta-pitch :y)
     
     ;;no need to look
-    ;; (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
+    (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
     ;; (objects (list *hrp2w* *tomato-up* *tomato-pedicel*))
     ;; (send-reset-manip-pose :time 3000)
     (send-angle-vector :time 3000)
@@ -190,6 +191,7 @@
 			   (car (send *hrp2w* :torso :links))))
     ;; Do IK to move the hand....also move the head to look at the branch
     (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
+    (send *irtviewer* :draw-objects)
     ;; next we need to setup a command to move the real robot.... reserved...
 
     (while t
