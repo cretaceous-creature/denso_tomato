@@ -8,13 +8,16 @@
 (defun send-reset-manip-pose (&key (time 5000))
   (send *hrp2w* :reset-manip-pose)
   (send *irtviewer* :draw-objects)
-  (send *ri* :angle-vector (send *hrp2w* :angle-vector) time)
-  (send *ri* :wait-interpolation))
+  (when *real*
+    (send *ri* :angle-vector (send *hrp2w* :angle-vector) time)
+    (send *ri* :wait-interpolation))
+  )
 (defun pr () (send-reset-manip-pose))
 
 (defun send-angle-vector (&key (time 5000))
-  (send *ri* :angle-vector (send *hrp2w* :angle-vector) time)
-  (send *ri* :wait-interpolation))
+  (when *real*
+    (send *ri* :angle-vector (send *hrp2w* :angle-vector) time)
+    (send *ri* :wait-interpolation)))
 
 (defun move-ik (co &key (arm :rarm) (time 5000))
   (when
