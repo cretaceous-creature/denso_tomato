@@ -37,9 +37,9 @@
 	  ) ;;
 	 ((equal key-input "2") (stop-cut)
 	  ) ;;
-	 ((equal key-input "3") (start-left-cut)
+	 ((equal key-input "3") (start-cut :arm :larm)
 	  ) ;;
-	 ((equal key-input "4") (stop-left-cut)
+	 ((equal key-input "4") (stop-cut :arm :larm)
 	  ) ;;
 	 ((equal key-input "q") (return-from hasami)) ;; "q"=quit
 	 )
@@ -206,17 +206,11 @@
 
        ;; cutting tomatoes, if success, should reset-pose
        ((equal key-input "c")
-	(if (eq arm :rarm)
-	    (start-cut)
-	  (start-left-cut)
-	  )
+	(start-cut :arm arm)
 	)
 
        ((equal key-input "s")
-	(if (eq arm :rarm)
-	    (stop-cut)
-	  (stop-left-cut)
-	  )
+	(stop-cut :arm arm)
 	)
 
        ;;placing tomatoes, should follow reset-pose

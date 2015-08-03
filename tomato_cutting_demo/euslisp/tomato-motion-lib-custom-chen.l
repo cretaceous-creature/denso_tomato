@@ -22,18 +22,15 @@
   
 )
 
+(defun start-cut (&key (arm :rarm))
+  (cond
+   ((eq arm :rarm)
+    (hrp2w-start-grasp :rarm :angle -8))
+   ((eq arm :larm)
+    (hrp2w-start-grasp :larm :angle 8))))   
 
-(defun start-left-cut ()
-  (hrp2w-start-grasp :larm :angle 8))
-
-(defun stop-left-cut ()
-  (hrp2w-stop-grasp :larm))
-
-(defun start-cut ()
-  (hrp2w-start-grasp :rarm :angle -8))
-
-(defun stop-cut ()
-  (hrp2w-stop-grasp :rarm))
+(defun stop-cut (&key (arm :rarm))
+  (hrp2w-stop-grasp arm))
 
 (defun move-hand-vi
   (&key (real *real*) (robot *hrp2*) (arm :rarm) (move-time (* 0.5 *base-time*))
