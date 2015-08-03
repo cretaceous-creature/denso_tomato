@@ -83,26 +83,20 @@
     ;;(send *tomato-pedicel* :locate #f(-100 20 0))
 
     ;; now yaw to let the x axis aim at pedicel in xy plane
-    (setq r (unit-matrix 3))
     (setq vec (v- (send *tomato-pedicel* :worldpos)
 		  (send *tomato-up* :worldpos)))
     (setq x-vec (elt vec 0)
 	  y-vec (elt vec 1)
 	  z-vec (elt vec 2))
-    (setq theta-yaw (atan2 y-vec x-vec))
-    (setq theta-roll (atan2 z-vec y-vec))
+    (setq theta-roll (atan2 z-vec y-vec)
+	  theta-pitch (atan2 (- z-vec) (abs x-vec))
+	  theta-yaw (atan2 y-vec x-vec))
+
     ;; rotate theta ....it should be x axis aim at pedicel   
-    (setq r1 (rotate-matrix r theta-yaw :z))
-    (send *tomato-up* :rotate r1)
-    (setq theta-pitch (atan2 (- z-vec) (abs x-vec)))
+    (send *tomato-up* :rotate theta-yaw :z)
     ;;now pitch , to let the x axis aim at pedicel in xz plane
-    (setq r2 (rotate-matrix r theta-pitch :y))
-
-    (setq theta-roll (atan2 z-vec y-vec))
-    (setq r3 (rotate-matrix r theta-roll :x))
-
     ;;pitch to the final pose
-    (send *tomato-up* :rotate r2)
+    (send *tomato-up* :rotate theta-pitch :y)
     
     ;;then we need to move to pedicel location....thats all
     ;; we need to use theta_yaw to decide which hand to use
@@ -130,7 +124,6 @@
 		(if (> (abs theta-yaw) (/ pi 1.3))
 		    (send *tomato-up* :rotate (/ -pi 1.4) :z)
 		  (send *tomato-up* :rotate (/ -pi 2.6) :z))
-		  
 		(setq *ik-target* (send *tomato-up* :copy-coords))
 		;;then transform to the center...
 		(send *tomato-pedicel* :translate (scale -0.5 vec))
@@ -158,7 +151,6 @@
 	      (if (> (abs theta-yaw) (/ pi 1.3))
 		  (send *tomato-up* :rotate (/ pi 1.4) :z)
 		(send *tomato-up* :rotate (/ pi 2.6) :z))
-	      (send *tomato-up* :rotate r-tmp)
 	      (setq *ik-target* (send *tomato-up* :copy-coords))
 	      (send *tomato-pedicel* :translate (scale -0.5 vec))
 	      (send *ik-target* :replace-pos
