@@ -197,6 +197,30 @@ void viewerOneOff(pcl::visualization::PCLVisualizer& viewer,pcl::PointCloud<pcl:
 
         }
 
+    // broadcast TF
+    {
+      float x,y,z,r;
+      if(TEST->Tomato_model.size()){
+        r = TEST->Tomato_model[0].Modelcoeff.values[3];
+        x = TEST->Tomato_model[0].Modelcoeff.values[0] -
+            (r + cutting_dist) * TEST->G_vector.x;
+        y = TEST->Tomato_model[0].Modelcoeff.values[1] -
+            (r + cutting_dist) * TEST->G_vector.y;
+        z = TEST->Tomato_model[0].Modelcoeff.values[2] -
+            (r + cutting_dist) * TEST->G_vector.z;
+        tf_transmit(x, y, z, "pcenter");
+        if(TEST->Tomato_model[0].BV.size() > 1){
+          x = TEST->Tomato_model[0].Modelcoeff.values[0] +
+              (r + cutting_dist) * TEST->Tomato_model[0].Pedicel_e.vector.x;
+          y = TEST->Tomato_model[0].Modelcoeff.values[1] +
+              (r + cutting_dist) * TEST->Tomato_model[0].Pedicel_e.vector.y;
+          z = TEST->Tomato_model[0].Modelcoeff.values[2] +
+              (r + cutting_dist) * TEST->Tomato_model[0].Pedicel_e.vector.z;
+        }
+        tf_transmit(x, y, z, "ppedicel");
+      }
+    }  // TF
+
     // publish marker
     visualization_msgs::Marker pedicels_marker;
     pedicels_marker.header.frame_id = "/camera_rgb_optical_frame";
