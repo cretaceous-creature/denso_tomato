@@ -4,7 +4,6 @@
 ;(load "setup-hrp2-tomato.l")
 (load "hand-camera.l")
 
-
 (defun send-reset-manip-pose (&key (time 5000))
   (send *hrp2w* :reset-manip-pose)
   (send *irtviewer* :draw-objects)
@@ -64,8 +63,108 @@
   (cons *tomato-up-t* *tomato-pedicel-t*)
   )
 
+(defun tomato-marker-callback (msg)
+  (let (markers radius posx posy posz sphere camera-coords tomato-coords)
+    (setq *tomato-spheres* nil)
+    (unless
+	(send *tfl* :wait-for-transform
+	      "BODY" "camera_rgb_optical_frame" (ros::time 0) 10)
+      (return-from tomato-marker-callback nil))
+    (setq camera-coords
+	   (send *tfl* :lookup-transform
+		 "BODY" "camera_rgb_optical_frame" (ros::time 0)))
+
+    (setq markers (send msg :markers))
+    (dolist (marker markers)
+      (setq posx (send marker :pose :position :x)
+	    posy (send marker :pose :position :y)
+	    posz (send marker :pose :position :z)
+	    radius (* 500.0 (send marker :scale :x)))
+      (setq sphere (make-gdome (make-icosahedron radius)))
+      (send sphere :set-color :red)
+      (setq tomato-coords
+	    (send
+	     (send camera-coords :copy-worldcoords)
+	     :transform (make-coords :pos
+				     (scale 1000.0 (float-vector posx posy posz)))))
+      (send sphere :newcoords tomato-coords)
+      (push sphere *tomato-spheres*)
+      )
+    )
+  )
+
+(defun pedicel-marker-callback (msg)
+  (let (camera-coords points p0 p1 v0 v1 pedicel
+		      vz vp
+		      innerp outerp
+		      theta cost sint)
+    (setq *tomato-pedicels* nil)
+    (unless
+	(send *tfl* :wait-for-transform
+	      "BODY" "camera_rgb_optical_frame" (ros::time 0) 10)
+      (return-from tomato-marker-callback nil))
+    (setq camera-coords
+	   (send *tfl* :lookup-transform
+		 "BODY" "camera_rgb_optical_frame" (ros::time 0)))
+    (setq points (send msg :points))
+    (dotimes (i (/ (length points) 2))
+      (setq p0 (elt points (* i 2))
+	    p1 (elt points (1+ (* i 2))))
+      (setq v0 (scale 1000.0
+		      (float-vector (send p0 :x) (send p0 :y) (send p0 :z)))
+	    v1 (scale 1000.0
+		      (float-vector (send p1 :x) (send p1 :y) (send p1 :z))))
+      (setq pedicel (make-cylinder 2.5 (distance v0 v1)))
+      (send pedicel :translate v0)
+      (setq vz (float-vector 0 0 1)
+	    vp (normalize-vector (v- v1 v0)))
+      (setq innerp (v. vz vp) outerp (v* vz vp))
+      (setq theta (acos innerp)
+	    cost (cos (* 0.5 theta))
+	    sint (sin (* 0.5 theta)))
+      (setq outerp (normalize-vector outerp))
+      (setq quat (float-vector
+		  cost
+		  (* sint (elt outerp 0))
+		  (* sint (elt outerp 1))
+		  (* sint (elt outerp 2))))
+      (send pedicel :replace-rot (quaternion2matrix quat))
+      (send pedicel :newcoords
+	    (send (send camera-coords :copy-worldcoords) :transform
+		  (send pedicel :copy-worldcoords)))
+      (send pedicel :set-color :green)
+      (push pedicel *tomato-pedicels*)
+      )
+    )
+  )
+
+(ros::subscribe "/tomato_fruits" visualization_msgs::MarkerArray
+		#'tomato-marker-callback)
+(ros::subscribe "/tomato_pedicels" visualization_msgs::Marker
+		#'pedicel-marker-callback)
+
+(defun get-tomato-markers ()
+  (setq *tomato-spheres* nil
+	*tomato-pedicels* nil)
+  (ros::spin-once)
+  (mapcar
+   #'(lambda (tomato)
+       (send tomato :newcoords
+	     (send
+	      (send *hrp2w* :body_lk :copy-worldcoords)
+	      :transform (send tomato :worldcoords))))
+   *tomato-spheres*)
+  (mapcar
+   #'(lambda (tomato)
+       (send tomato :newcoords
+	     (send
+	      (send *hrp2w* :body_lk :copy-worldcoords)
+	      :transform (send tomato :worldcoords))))
+   *tomato-pedicels*)
+  )
 
 (defun move-to-tomato()  
+  (get-tomato-markers)
   (lookup-tomato-tf)
   (when (and *tomato-up-t* *tomato-pedicel-t*)
     (send *hrp2w* :reset-manip-pose)
@@ -185,8 +284,10 @@
       )
      )
 
-    (objects (list *hrp2w* *tomato-up* *tomato-pedicel*
-		   *approach-target* *cut-target*))
+    (objects
+     (flatten (list *hrp2w* *tomato-up* *tomato-pedicel*
+		    *approach-target* *cut-target*
+		    *tomato-spheres* *tomato-pedicels*)))
     ;;first approach-target
     (send *hrp2w* arm :inverse-kinematics *approach-target*
 	  :rotation-axis t :debug-view t :torso t
