@@ -6,6 +6,7 @@
 
 (defun send-reset-manip-pose (&key (time 5000))
   (send *hrp2w* :reset-manip-pose)
+  (send *hrp2w* :head-neck-p :joint-angle 15)
   (send *irtviewer* :draw-objects)
   (when *real*
     (send *ri* :angle-vector (send *hrp2w* :angle-vector) time)
@@ -26,9 +27,9 @@
 			     (send *hrp2w* arm :end-coords :parent)
 			     (car (send *hrp2w* :torso :links))))
     (send *hrp2w* :head :look-at (send co :worldpos))
+    (send *irtviewer* :draw-objects)
     (send-angle-vector :time time)
     )
-  (send *irtviewer* :draw-objects)
   )
 
 (defun hasami()
@@ -219,10 +220,10 @@
     ;;only one tomato use right hand
     (if singletomatop
 	(progn
-	  (setq arm :rarm
+	  (setq *arm* :rarm
 		harvestablep t))
       (progn
-	(setq arm (if (>= theta-yaw 0.0) :rarm :larm)
+	(setq *arm* (if (>= theta-yaw 0.0) :rarm :larm)
 	      harvestablep (> (abs theta-yaw) (/ pi 2.2)))
 	;; because of robot   we cant handle all the situation
 	))
@@ -232,7 +233,7 @@
       (return-from move-to-tomato nil))
 
     (format t ";; single tomato? : ~a~%" singletomatop)
-    (format t ";; arm : ~a~%" arm)
+    (format t ";; arm : ~a~%" *arm*)
 
     (setq *approach-target* (send *tomato-up* :copy-coords)
 	  *pedicel-target* (send *tomato-pedicel* :copy-coords)
@@ -246,7 +247,7 @@
       (send *approach-target* :locate (float-vector -25 0 10))
       (send *approach-target* :locate (float-vector -140 -15 36))
       )
-     ((eq arm :rarm)
+     ((eq *arm* :rarm)
       ;; because of robot   we cant handle all the situation
       (if (> (abs theta-yaw) (/ pi 1.3))
 	  (send *approach-target* :rotate (/ -pi 1.4) :z)
@@ -258,7 +259,7 @@
       (send *pedicel-target* :locate (float-vector 20 5 0))
       (send *approach-target* :locate (float-vector -140 -15 36))
       )
-     ((eq arm :larm)
+     ((eq *arm* :larm)
       (if (> (abs theta-yaw) (/ pi 1.3))
 	  (send *approach-target* :rotate (/ pi 1.4) :z)
 	(send *approach-target* :rotate (/ pi 2.6) :z))
@@ -276,68 +277,96 @@
      (singletomatop
       (send *cut-target* :locate (float-vector -115 -5 35))
       )
-     ((eq arm :rarm)
+     ((eq *arm* :rarm)
       (send *cut-target* :locate (float-vector -115 -15 35))
       )
-     ((eq arm :larm)
+     ((eq *arm* :larm)
       (send *cut-target* :locate (float-vector -118 40 45))
       )
      )
 
     (objects
-     (flatten (list *hrp2w* *tomato-up* *tomato-pedicel*
+     (flatten (list *hrp2w* *hako*
+		    *tomato-up* *tomato-pedicel*
 		    *approach-target* *cut-target*
 		    *tomato-spheres* *tomato-pedicels*)))
     ;;first approach-target
-    (send *hrp2w* arm :inverse-kinematics *approach-target*
+    (send *hrp2w* *arm* :inverse-kinematics *approach-target*
 	  :rotation-axis t :debug-view t :torso t
 	  :link-list (send *hrp2w* :link-list
-			   (send *hrp2w* arm :end-coords :parent)
+			   (send *hrp2w* *arm* :end-coords :parent)
 			   (car (send *hrp2w* :torso :links))))
     ;; Do IK to move the hand....also move the head to look at the branch
     (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
     (send *irtviewer* :draw-objects)
     ;; next we need to setup a command to move the real robot.... reserved...
 
-    (while t
-      (setf key-input (read-line))
-      (cond
-       ;;execution
-       ((equal key-input "x")
-	(move-ik *approach-target* :arm arm)
-	) 
+    ;; (while t
+    ;;   (setf key-input (read-line))
+    ;;   (cond
+    ;;    ;;execution
+    ;;    ((equal key-input "x")
+    ;; 	;; (move-ik *approach-target* :arm *arm*)
+    ;; 	(send-angle-vector)
+    ;; 	) 
 
-       ;; move-hand-vi   adjusting, the maybe error
-       ((equal key-input "m") (move-hand-vi)
-	) ;;
+    ;;    ;; move-hand-vi   adjusting, the maybe error
+    ;;    ((equal key-input "m") (move-hand-vi)
+    ;; 	) ;;
 
-       ;;reset-pose   very important
-       ((equal key-input "r")
-	(send-reset-manip-pose)
-	) ;;
+    ;;    ;;reset-pose   very important
+    ;;    ((equal key-input "r")
+    ;; 	(send-reset-manip-pose)
+    ;; 	) ;;
 
-       ;; cutting tomatoes, if success, should reset-pose
-       ((equal key-input "c")
-	(start-cut :arm arm)
-	)
+    ;;    ;; cutting tomatoes, if success, should reset-pose
+    ;;    ((equal key-input "c")
+    ;; 	(start-cut :arm *arm*)
+    ;; 	)
 
-       ((equal key-input "s")
-	(stop-cut :arm arm)
-	)
+    ;;    ((equal key-input "s")
+    ;; 	(stop-cut :arm *arm*)
+    ;; 	)
 
-       ;;placing tomatoes, should follow reset-pose
-       ((equal key-input "p")
-	(reset-place-pose arm)
-	)
+    ;;    ;;placing tomatoes, should follow reset-pose
+    ;;    ((equal key-input "p")
+    ;; 	(reset-place-pose *arm*)
+    ;; 	)
 
-       ;;quit
-       ((equal key-input "q") (return-from move-to-tomato)) ;; "q"=quit
+    ;;    ;;quit
+    ;;    ((equal key-input "q") (return-from move-to-tomato)) ;; "q"=quit
 
-       ;;next we move to pedicel pos  only pos, rot do no change
-       ((equal key-input "g")
-	(move-ik *cut-target* :arm arm :time 2000)
-	)
-       )
-      )  ;; while loop
+    ;;    ;;next we move to pedicel pos  only pos, rot do no change
+    ;;    ((equal key-input "g")
+    ;; 	(move-ik *cut-target* :arm *arm* :time 2000)
+    ;; 	)
+    ;;    )
+    ;;   )  ;; while loop
     ) ;; when
   )  ;; defun
+
+(defun move-to-pedicel ()
+  (send *hrp2w* *arm* :inverse-kinematics *cut-target*
+	:rotation-axis t :debug-view t :torso t
+	:link-list (send *hrp2w* :link-list
+			 (send *hrp2w* *arm* :end-coords :parent)
+			 (car (send *hrp2w* :torso :links))))
+  (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
+  (send *irtviewer* :draw-objects)
+  )
+
+(defun usage ()
+  (format t ";; ~%")
+  (format t ";; tomato harvesting demo for IROS2015~%")
+  (format t ";; ~%")
+  (format t ";; (send-reset-manip-pose) to reset pose~%")
+  (format t ";; (move-to-tomato) to resolve ik to approach tomato~%")
+  (format t ";; (send-angle-vector) to go actual pose~%")
+  (format t ";; (move-to-pedicel) to resolve ik to cutting pose~%")
+  (format t ";; (send-angle-vector) to go actual pose~%")
+  (format t ";; (start-cut) to cut and grasp~%")
+  (format t ";; (send-reset-manip-pose) to reset pose~%")
+  (format t ";; (reset-place-pose) to place tomato~%")
+  (format t ";; (send-reset-manip-pose) to reset pose~%")
+  )
+(usage)
