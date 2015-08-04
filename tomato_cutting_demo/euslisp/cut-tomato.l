@@ -115,6 +115,7 @@
     ;;  (send *tomato-up* :locate #f(-120 20 0)) for right
     ;; (send *tomato-up* :locate #f(-120 20 20)) for left      
 
+    (format t ";; theta-yaw: ~a~%" theta-yaw)
     (setq singletomatop (eps= theta-yaw 0.0))
     ;;only one tomato use right hand
     (if singletomatop
@@ -130,6 +131,9 @@
     (unless harvestablep
       (format t ";; cannot harvest: pedicel angle too deep.~%")
       (return-from move-to-tomato nil))
+
+    (format t ";; single tomato? : ~a~%" singletomatop)
+    (format t ";; arm : ~a~%" arm)
 
     (setq *approach-target* (send *tomato-up* :copy-coords)
 	  *pedicel-target* (send *tomato-pedicel* :copy-coords)
