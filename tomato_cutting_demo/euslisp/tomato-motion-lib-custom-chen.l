@@ -12,15 +12,14 @@
     (warn ";; reset-tomato-pose :rarm~%")
     (send *hrp2* :rarm :angle-vector
 	  (float-vector -8.02614 -18.2593 46.29 -26.3519 16.8251 18.1081 -51.4632 12.0)))
-  (when (boundp '*ri*)
+  (send *irtviewer* :draw-objects)
+  (when (and *real* (boundp '*ri*))
     (send *ri* :angle-vector (send *hrp2* :angle-vector) 5000)
-    (send *ri* :wait-interpolation))
+    (send *ri* :wait-interpolation)
     ;;(send *ri* :stop-grasp :larm)
     ;;(send *ri* :stop-grasp :rarm)
-    (stop-cut)
-    (stop-left-cut))
-  
-)
+    (stop-cut :arm arm))
+  )
 
 (defun start-cut (&key (arm :rarm))
   (cond

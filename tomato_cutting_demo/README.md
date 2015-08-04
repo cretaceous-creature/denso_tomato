@@ -13,7 +13,6 @@
 ```
   $ roscd tomato_cutting_demo/euslisp
   $ roseus cut-tomato.l
-  $ (pr)  ;; reset man-ip-pose
 ```
 
 ### start cutting
@@ -21,26 +20,13 @@
 On the roseus console:
 
 ```
-  $ (move-to-tomato)
-  x
-  g
-  c
-  r
-  p
-  s
-  r
-  q
+  (move-to-tomato)
+  (send-angle-vector)  ;; robot move!!
+  (move-to-pedicel)
+  (send-angle-vector)  ;; robot move!!
+  (start-cut)  ;; scissors move!!
+  (send-reset-manip-pose)  ;; robot move!!
+  (reset-place-pose)  ;; scissors and robot move!!
+  (send-reset-manip-pose)  ;; robot move!!
 ```
-
-| command | description |
-|:--------|:------------|
-| q | Quit function |
-| x | Approach to the tomato |
-| g | Go to pedicel |
-| c | Cut |
-| r | Reset pose |
-| p | Put to tray |
-| s | Stop cut |
-| r | Reset pose |
-| m | Alter motion (teleop) |
 
