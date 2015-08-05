@@ -52,7 +52,8 @@
 
 (defun lookup-tomato-tf ()
   (setq *tomato-up-t* nil
-	*tomato-pedicel-t* nil)
+	*tomato-pedicel-t* nil
+	*camera-coords* nil)
   (when
       (send *tfl* :wait-for-transform "BODY" "pcenter" (ros::time 0) 10)
     (setq *tomato-up-t*
@@ -61,19 +62,20 @@
       (send *tfl* :wait-for-transform "BODY" "ppedicel" (ros::time 0) 10)
     (setq *tomato-pedicel-t*
 	  (send *tfl* :lookup-transform "BODY" "ppedicel" (ros::time 0))))
+  (when
+      (send *tfl* :wait-for-transform
+	    "BODY" "camera_rgb_optical_frame" (ros::time 0) 10)
+    (setq *camera-coords*
+	  (send *tfl* :lookup-transform
+		"BODY" "camera_rgb_optical_frame" (ros::time 0))))
   (cons *tomato-up-t* *tomato-pedicel-t*)
   )
 
 (defun tomato-marker-callback (msg)
-  (let (markers radius posx posy posz sphere camera-coords tomato-coords)
+  (let (markers radius posx posy posz sphere tomato-coords)
     (setq *tomato-spheres* nil)
-    (unless
-	(send *tfl* :wait-for-transform
-	      "BODY" "camera_rgb_optical_frame" (ros::time 0) 10)
+    (unless *camera-coords*
       (return-from tomato-marker-callback nil))
-    (setq camera-coords
-	   (send *tfl* :lookup-transform
-		 "BODY" "camera_rgb_optical_frame" (ros::time 0)))
 
     (setq markers (send msg :markers))
     (dolist (marker markers)
@@ -85,9 +87,10 @@
       (send sphere :set-color :red)
       (setq tomato-coords
 	    (send
-	     (send camera-coords :copy-worldcoords)
-	     :transform (make-coords :pos
-				     (scale 1000.0 (float-vector posx posy posz)))))
+	     (send *camera-coords* :copy-worldcoords)
+	     :transform
+	     (make-coords :pos
+			  (scale 1000.0 (float-vector posx posy posz)))))
       (send sphere :newcoords tomato-coords)
       (push sphere *tomato-spheres*)
       )
@@ -95,18 +98,14 @@
   )
 
 (defun pedicel-marker-callback (msg)
-  (let (camera-coords points p0 p1 v0 v1 pedicel
-		      vz vp
-		      innerp outerp
-		      theta cost sint)
+  (let (points p0 p1 v0 v1 pedicel
+	       vz vp
+	       innerp outerp
+	       theta cost sint)
     (setq *tomato-pedicels* nil)
-    (unless
-	(send *tfl* :wait-for-transform
-	      "BODY" "camera_rgb_optical_frame" (ros::time 0) 10)
+    (unless *camera-coords*
       (return-from tomato-marker-callback nil))
-    (setq camera-coords
-	   (send *tfl* :lookup-transform
-		 "BODY" "camera_rgb_optical_frame" (ros::time 0)))
+
     (setq points (send msg :points))
     (dotimes (i (/ (length points) 2))
       (setq p0 (elt points (* i 2))
@@ -131,7 +130,7 @@
 		  (* sint (elt outerp 2))))
       (send pedicel :replace-rot (quaternion2matrix quat))
       (send pedicel :newcoords
-	    (send (send camera-coords :copy-worldcoords) :transform
+	    (send (send *camera-coords* :copy-worldcoords) :transform
 		  (send pedicel :copy-worldcoords)))
       (send pedicel :set-color :green)
       (push pedicel *tomato-pedicels*)
@@ -153,20 +152,20 @@
        (send tomato :newcoords
 	     (send
 	      (send *hrp2w* :body_lk :copy-worldcoords)
-	      :transform (send tomato :worldcoords))))
+	      :transform (send tomato :copy-worldcoords))))
    *tomato-spheres*)
   (mapcar
    #'(lambda (tomato)
        (send tomato :newcoords
 	     (send
 	      (send *hrp2w* :body_lk :copy-worldcoords)
-	      :transform (send tomato :worldcoords))))
+	      :transform (send tomato :copy-worldcoords))))
    *tomato-pedicels*)
   )
 
 (defun move-to-tomato()  
-  (get-tomato-markers)
   (lookup-tomato-tf)
+  (get-tomato-markers)
   (when (and *tomato-up-t* *tomato-pedicel-t*)
     (send *hrp2w* :reset-manip-pose)
     ;; (setq *torso-co* (send (car (send *hrp2w* :torso)) :copy-worldcoords))
@@ -176,9 +175,11 @@
     ;;*tomato-up tomato-pedicel* is the coordinate transform
     (setq
      *tomato-up*
-     (send (send *torso-co* :copy-worldcoords) :transform *tomato-up-t*)
+     (send (send *torso-co* :copy-worldcoords) :transform
+	   (send *tomato-up-t* :copy-worldcoords))
      *tomato-pedicel*
-     (send (send *torso-co* :copy-worldcoords) :transform *tomato-pedicel-t*))
+     (send (send *torso-co* :copy-worldcoords) :transform 
+	   (send *tomato-pedicel-t* :copy-worldcoords)))
     ;; *ik-target* is the target center in world coordinate
     
     ;; show in IRT viewer.... copy rot
@@ -203,10 +204,10 @@
     (send *tomato-up* :rotate theta-pitch :y)
     
     ;;no need to look
-    (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
+    ;; (send *hrp2w* :head :look-at (send *tomato-up* :worldpos))
     ;; (objects (list *hrp2w* *tomato-up* *tomato-pedicel*))
     ;; (send-reset-manip-pose :time 3000)
-    (send-angle-vector :time 3000)
+    ;; (send-angle-vector :time 3000)
 
 
     ;;then we need to move to pedicel location....thats all
@@ -230,6 +231,10 @@
 
     (unless harvestablep
       (format t ";; cannot harvest: pedicel angle too deep.~%")
+      (objects
+       (flatten (list *hrp2w* *hako*
+		      *tomato-up* *tomato-pedicel*
+		      *tomato-spheres* *tomato-pedicels*)))
       (return-from move-to-tomato nil))
 
     (format t ";; single tomato? : ~a~%" singletomatop)
