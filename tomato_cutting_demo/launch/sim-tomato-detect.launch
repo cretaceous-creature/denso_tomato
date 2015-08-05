@@ -4,5 +4,9 @@
 	name="body_to_camera_link"
 	args="0 0 0.6 0 0.2 0 /BODY /camera_link 100" />
 
+  <!-- camera -->
+  <include file="$(find jsk_pcl_ros)/launch/openni2_local.launch" />
+  <include file="$(find jsk_pcl_ros)/launch/openni2_remote.launch" />
+
   <include file="$(find tomato_cutting_demo)/launch/start_tomato_detect.launch" />
 </launch>
