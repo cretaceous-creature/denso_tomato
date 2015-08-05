@@ -1,8 +1,4 @@
 <launch>
-  <!-- camera -->
-  <include file="$(find jsk_pcl_ros)/launch/openni2_local.launch" />
-  <include file="$(find jsk_pcl_ros)/launch/openni2_remote.launch" />
-
   <!-- process -->
   <include file="$(find tomato_detect)/launch/tomato.launch">
     <arg name="camera_root_frame" value="/BODY" />
