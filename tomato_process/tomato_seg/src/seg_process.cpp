@@ -192,6 +192,11 @@ TOMATOSEGMENTATION::ICP_CON(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudall,
     std::vector<int> indices;
     pcl::removeNaNFromPointCloud(*cloudall,*cloudall, indices);
     pcl::removeNaNFromPointCloud(*cloudframe,*cloudframe, indices);
+    if(cloudall->points.size()==0)
+        return cloudframe->makeShared();
+    if(cloudframe->points.size()==0)
+        return cloudall->makeShared();
+
     pcl::IterativeClosestPoint<pcl::PointXYZRGB, Pointhandeye> icp;
     icp.setInputCloud(cloudall);            //original point cloud
     icp.setInputTarget(cloudframe);         //the cloud to move to registrate to original one
