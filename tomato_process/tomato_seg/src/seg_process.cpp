@@ -223,6 +223,9 @@ TOMATOSEGMENTATION::Polyfit(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 
     mls.setComputeNormals (true);
 
+    std::vector<int> indices;
+    pcl::removeNaNFromPointCloud(*cloud, *cloud, indices);
+
     // Set parameters
     mls.setInputCloud (cloud);
     mls.setPolynomialFit (true);
