@@ -225,7 +225,8 @@
 		harvestablep t))
       (progn
 	(setq *arm* (if (>= theta-yaw 0.0) :rarm :larm)
-	      harvestablep (> (abs theta-yaw) (/ pi 2.2)))
+	      ;; harvestablep (> (abs theta-yaw) (/ pi 2.2)))
+	      harvestablep (< (abs theta-yaw) (/ pi 2.2)))
 	;; because of robot   we cant handle all the situation
 	))
 
