@@ -1,0 +1,14 @@
+rarm:
+  - shoulder_pan_joint  : rarm-shoulder-y
+  - shoulder_lift_joint : rarm-shoulder-p
+  - elbow_joint         : rarm-elbow-p
+  - wrist_1_joint       : rarm-wrist-p
+  - wrist_2_joint       : rarm-wrist-y
+  - wrist_3_joint       : rarm-wrist-r
+
+rarm-end-coords:
+  parent : ee_link
+
+angle-vector:
+  reset-manip-pose : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  reset-pose : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
