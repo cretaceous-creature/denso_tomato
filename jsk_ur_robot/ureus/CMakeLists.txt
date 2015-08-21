@@ -28,17 +28,17 @@ message("collada2eus: ${_collada2eus}")
 
 
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/ur5_robot.l)
-  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/ur5_robot.urdf
-    COMMAND cp ${_ur_urdf}/ur5_robot.urdf ${PROJECT_SOURCE_DIR}/ur5_robot.urdf
+  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/models/ur5_robot.urdf
+    COMMAND cp ${_ur_urdf}/ur5_robot.urdf ${PROJECT_SOURCE_DIR}/models/ur5_robot.urdf
     DEPENDS ${_ur_urdf}/ur5_robot.urdf)
-  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/ur5_robot.dae
+  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/models/ur5_robot.dae
     COMMAND echo "${_urdf_to_collada} ${PROJECT_SOURCE_DIR}/ur5_robot.urdf ur5_robot.dae"
-    COMMAND ${_urdf_to_collada} ${PROJECT_SOURCE_DIR}/ur5_robot.urdf ${PROJECT_SOURCE_DIR}/ur5_robot.dae
-    DEPENDS ${PROJECT_SOURCE_DIR}/ur5_robot.urdf)
-  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/ur5_robot.l
-    COMMAND echo "${_collada2eus} ur5_robot.dae ur5_robot.l"
-    COMMAND ${_collada2eus} ${PROJECT_SOURCE_DIR}/ur5_robot.dae ${PROJECT_SOURCE_DIR}/ur5_robot.yaml ${PROJECT_SOURCE_DIR}/ur5_robot.l
-    DEPENDS ${PROJECT_SOURCE_DIR}/ur5_robot.dae ${PROJECT_SOURCE_DIR}/ur5_robot.yaml ${_collada2eus})
-  add_custom_target(compile_ur ALL DEPENDS ${PROJECT_SOURCE_DIR}/ur5_robot.l)
+    COMMAND ${_urdf_to_collada} ${PROJECT_SOURCE_DIR}/models/ur5_robot.urdf ${PROJECT_SOURCE_DIR}/models/ur5_robot.dae
+    DEPENDS ${PROJECT_SOURCE_DIR}/models/ur5_robot.urdf)
+  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/models/ur5_robot.l
+    COMMAND echo "${_collada2eus} models/ur5_robot.dae models/ur5_robot.l"
+    COMMAND ${_collada2eus} ${PROJECT_SOURCE_DIR}/models/ur5_robot.dae ${PROJECT_SOURCE_DIR}/models/ur5_robot.yaml ${PROJECT_SOURCE_DIR}/models/ur5_robot.l
+    DEPENDS ${PROJECT_SOURCE_DIR}/models/ur5_robot.dae ${PROJECT_SOURCE_DIR}/models/ur5_robot.yaml ${_collada2eus})
+  add_custom_target(compile_ur ALL DEPENDS ${PROJECT_SOURCE_DIR}/models/ur5_robot.l)
 endif()
 
