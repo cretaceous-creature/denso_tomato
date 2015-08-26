@@ -6,7 +6,10 @@
 
   <!-- camera -->
   <include file="$(find jsk_pcl_ros)/launch/openni2_local.launch" />
-  <include file="$(find jsk_pcl_ros)/launch/openni2_remote.launch" />
+  <include file="$(find jsk_pcl_ros)/launch/openni2_remote.launch">
+    <arg name="depth_calibration_file"
+	 value="$(find tomato_cutting_demo)/launch/default_depth_calibration_parameter.yaml" />
+  </include>
 
   <include file="$(find tomato_cutting_demo)/launch/start_tomato_detect.launch" />
 </launch>
