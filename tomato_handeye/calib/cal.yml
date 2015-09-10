@@ -1,0 +1,28 @@
+image_width: 1280
+image_height: 960
+camera_name: gige_camera_baumer17
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [954.933664, 0, 611.851503, 0, 955.336598, 483.077643, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.232097, 0.07878299999999999, 0.001972, -0.00004299999999999999, 0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [851.9022220000001, 0, 605.080412, 0, 0, 896.917236, 484.791237, 0, 0, 0, 1, 0]
+binning_x: 1
+binning_y: 1
+roi: 
+  x_offset: 0
+  y_offset: 0
+  height: 960
+  width: 1280
+  do_rectify: True
