@@ -1,16 +1,7 @@
 (load "package://jsk_tomato_robot/euslisp/jsk-tomato-robot.l")
 (load "package://jsk_tomato_robot/euslisp/tomato-model.l")
 
-(unless (boundp '*ur5*)
-  (jsk-tomato-robot-init)
-  (setq *endco*
-        (make-cascoords
-         :coords
-         (send *ur5* :rarm :end-coords :copy-worldcoords)))
-  (send *endco* :translate (float-vector 100 0 0))
-  (send *endco* :rotate pi/2 :y)
-  (send *ur5* :rarm :end-coords :assoc *endco*)
-  )
+(unless (boundp '*ur5*) (jsk-tomato-robot-init))
 
 (unless (boundp '*tomato-list*)
   (let (tomato0 tomato1 tomato2)
@@ -48,8 +39,8 @@
   (when
       (send *ur5* :rarm :inverse-kinematics
             (send tomato :worldcoords)
-            :move-target *endco*)
-    (send *tomato-hand* :assoc tomato)
+            :move-target (send *tomato-hand* :target-coords))
+    (send *tomato-hand* :catch tomato)
     (send *irtviewer* :draw-objects)
     )
   )
@@ -62,9 +53,9 @@
   (send *ur5* :rarm :wrist-p :joint-angle -155)
   (send *ur5* :rarm :wrist-y :joint-angle 0))
 
-(defun put-tomato (&optional (tomato (car *tomato-list*)))
+(defun put-tomato ()
   (put-ur5-pose)
-  (send *tomato-hand* :dissoc tomato)
+  (send *tomato-hand* :release)
   (send *irtviewer* :draw-objects))
 
 
