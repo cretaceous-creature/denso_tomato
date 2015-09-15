@@ -11,6 +11,11 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>collada_urdf</build_depend>
+  <build_depend>euscollada</build_depend>
+
+  <run_depend>collada_urdf</run_depend>
+  <run_depend>euscollada</run_depend>
   <run_depend>ureus</run_depend>
 
 </package>

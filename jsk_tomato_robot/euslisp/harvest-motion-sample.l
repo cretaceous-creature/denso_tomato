@@ -21,6 +21,11 @@
     (setq *tomato-list* (list tomato0 tomato1 tomato2))
     ))
 
+(setq *real* t)
+(defun send-angle-vector (&key (time 5000))
+  (when *real*
+    (send *ri* :angle-vector (send *ur5* :angle-vector) time)
+    (send *ri* :wait-interpolation)))
 
 (defun reset-ur5-pose ()
   (send *ur5* :reset-pose)
@@ -32,7 +37,7 @@
 
 (reset-ur5-pose)
 (objects (flatten (list *ur5* *tomato-hand* *tomato-base* *tomato-list*)))
-
+(send-angle-vector)
 
 ;; sample-motion
 (defun catch-tomato (&optional (tomato (car *tomato-list*)))
@@ -42,6 +47,7 @@
             :move-target (send *tomato-hand* :target-coords))
     (send *tomato-hand* :catch tomato)
     (send *irtviewer* :draw-objects)
+    (send-angle-vector)
     )
   )
 
@@ -56,6 +62,7 @@
 (defun put-tomato ()
   (put-ur5-pose)
   (send *tomato-hand* :release)
-  (send *irtviewer* :draw-objects))
+  (send *irtviewer* :draw-objects)
+  (send-angle-vector))
 
 
