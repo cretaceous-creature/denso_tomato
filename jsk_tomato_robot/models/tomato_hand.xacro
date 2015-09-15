@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<link name="tomato_hand_link">
+  <visual>
+    <geometry>
+      <cylinder length="0.11" radius="0.04" />
+    </geometry>
+    <origin rpy="0 0 0" xyz="0 0 -0.045" />
+    <material name="white">
+      <color rgba="1.0 1.0 1.0 1.0" />
+    </material>
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder length="0.11" radius="0.04" />
+    </geometry>
+    <origin rpy="0 0 0" xyz="0 0 -0.045" />
+  </collision>
+</link>
+
+<joint name="ee_to_hand" type="fixed">
+  <parent link="ee_link" />
+  <child link="tomato_hand_link" />
+  <origin xyz="0.1 0 0" rpy="0 1.57075 0" />
+</joint>
+
+</robot>
