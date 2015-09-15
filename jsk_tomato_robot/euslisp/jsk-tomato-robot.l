@@ -1,8 +1,10 @@
-(load "package://ureus/models/ur5_robot.l")
+(load "package://ureus/euslisp/ur5-interface.l")
 (load "package://jsk_tomato_robot/euslisp/tomato-hand.l")
 (load "package://jsk_tomato_robot/euslisp/tomato-base.l")
 
-(defun jsk-tomato-robot-init ()
+(defun jsk-tomato-robot-init (&rest args)
+  (if (not (boundp '*ri*))
+      (setq *ri* (instance* ur5-interface :init args)))
   (if (not (boundp '*tomato-hand*))
       (setq *tomato-hand* (make-tomato-hand)))
   (if (not (boundp '*tomato-base*))
