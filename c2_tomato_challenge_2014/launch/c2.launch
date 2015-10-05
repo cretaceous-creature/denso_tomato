@@ -1,0 +1,22 @@
+<launch>
+  <arg name="use_xtion" default="false" />
+  <arg name="use_scissors" default="false" />
+
+  <!-- aria_utils -->
+  <include file="$(find aria_utils)/launch/aria_utils.launch">
+    <arg name="setting_dir" value="settings_type2" />
+  </include>
+
+  <!-- xtion -->
+  <include file="$(find c2_tomato_challenge_2014)/launch/c2_openni2.launch"
+	   if="$(arg use_xtion)" />
+
+  <!-- scissors -->
+  <include file="$(find c2_tomato_challenge_2014)/launch/scissors_finger.launch"
+	   if="$(arg use_scissors)"  />
+
+  <!-- wheel drive -->
+  <node pkg="c2_tomato_challenge_2014"
+        type="c2_base_control.py"
+        name="c2_base_control" />
+</launch>

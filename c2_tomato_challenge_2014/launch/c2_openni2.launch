@@ -1,0 +1,10 @@
+<launch>
+  <!-- include file="$(find jsk_pcl_ros)/launch/openni2_local.launch" / -->
+  <!-- include file="$(find jsk_pcl_ros)/launch/openni2_remote.launch" / -->
+
+  <include file="$(find openni2_launch)/launch/openni2.launch" />
+
+  <node name="tf_pub_head_camera" pkg="tf" type="static_transform_publisher"
+        args="0.0 0.069 -0.05 0 0 -1.57 /neck3_link /camera_link 100" />
+</launch>
+
