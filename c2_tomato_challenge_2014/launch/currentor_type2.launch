@@ -1,0 +1,18 @@
+<launch>
+  <arg name="hostname" default="tomato" />
+  <arg name="virtual" default="0" />
+
+  <param name="robot_description" textfile="$(find aria_model)/aria.urdf" />
+  <include file="$(find ros2http)/ros2http_converter/launch/urdf.launch"
+           unless="$(arg virtual)"/>
+
+  <group if="$(arg virtual)">
+    <include file="$(find ros2http)/ros2http_converter/launch/virtual_urdf.launch" />
+    <node pkg="aria_utils" type="virtual_mcu_core" name="virtual_mcu_core" />
+  </group>
+
+  <include file="$(find ros2http)/ros2http_converter/launch/aria_socket.launch"
+           unless="$(arg virtual)">
+    <arg name="hostname" value="$(arg hostname)" />
+  </include>
+</launch>
