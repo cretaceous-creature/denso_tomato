@@ -1,6 +1,6 @@
-* How to use
+# How to use
 
-** install
+## install
 
 C2 depends on Currentor/Aria
 
@@ -18,7 +18,7 @@ $ ./gen-aria.sh
 ```
 
 
-** login
+## login
 
 Default: Robot PC (Thinkpad) is tomatillo.
 
@@ -35,7 +35,7 @@ ssh -X
 ```
 
 
-** byobu
+## byobu
 
 ```
 $ byobu
@@ -47,27 +47,27 @@ $ byobu
 
 
 
-** roscore
+## roscore
 
 ```
 $ roscore
 ```
 
 
-** launch currentor socket
+## launch currentor socket
 
 ```
 $ roslaunch hrp2_tomato_challenge_2014 currentor_type2.launch
 ```
 
-** launch ros bridge
+## launch ros bridge
 
 ```
 $ roslaunch hrp2_tomato_challenge_2014 c2.launch
 ```
 
 
-** send servo off command (At first time after power on)
+## send servo off command (At first time after power on)
 
 ```
 $ rosrun aria_utils aria servo_off
@@ -77,7 +77,7 @@ It returns immediately.
 
 
 
-** rviz (on client PC)
+## rviz (on client PC)
 
 At first, please set envs.
 
@@ -97,7 +97,7 @@ add RobotModel and check robot pose.
 
 
 
-** servo on and go initial
+## servo on and go initial
 
 ```
 $ rosrun aria_utils ariacore
@@ -106,7 +106,7 @@ $ rosrun aria_utils ariacore
 It returns immediately.
 
 
-** run euslisp interface
+## run euslisp interface
 
 ```
 $ roscd hrp2_tomato_challenge_2014/euslisp
@@ -117,7 +117,7 @@ $ (load "setup-c2-tomato.l")
 $ (real2model)
 ```
 
-*** reset pose
+### reset pose
 
 ```
 $ (c2-reset-manip-pose)
@@ -126,14 +126,14 @@ $ (c2-reset-manip-pose)
 If robot doesn't move, please type `(real2model)` and retry it.
 
 
-*** scissors control
+### scissors control
 
 ```
 $ (c2-stop-cut)
 $ (c2-start-cut)
 ```
 
-*** base control
+### base control
 
 NOTE that the forward direction of base is the backward of the body.
 
@@ -145,7 +145,7 @@ $ (c2-move-left)
 $ (c2-move-right)
 ```
 
-*** tomato manipulation
+### tomato manipulation
 
 ```
 $ (c2-reset-manip-larm)
@@ -162,7 +162,7 @@ move-lhand-vi is vi-like interface,
 - l: left
 
 
-*** put tomato pose
+### put tomato pose
 
 ```
 $ (c2-reset-manip-pose)
