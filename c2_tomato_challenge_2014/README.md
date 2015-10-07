@@ -57,13 +57,13 @@ $ roscore
 ** launch currentor socket
 
 ```
-$ roslaunch hrp2_tomato_challenge_2014 currentor_type2.launch
+$ roslaunch c2_tomato_challenge_2014 currentor_type2.launch
 ```
 
 ** launch ros bridge
 
 ```
-$ roslaunch hrp2_tomato_challenge_2014 c2.launch
+$ roslaunch c2_tomato_challenge_2014 c2.launch
 ```
 
 
@@ -109,7 +109,7 @@ It returns immediately.
 ** run euslisp interface
 
 ```
-$ roscd hrp2_tomato_challenge_2014/euslisp
+$ roscd c2_tomato_challenge_2014/euslisp
 $ emacs -nw
 M-x shell
 $ rosrun roseus roseus
