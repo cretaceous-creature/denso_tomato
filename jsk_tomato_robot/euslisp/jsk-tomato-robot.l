@@ -2,16 +2,19 @@
 (load "package://jsk_tomato_robot/euslisp/tomato-hand.l")
 (load "package://jsk_tomato_robot/euslisp/tomato-base.l")
 
-(defun jsk-tomato-robot-init (&rest args)
+(defun jsk-tomato-robot-init (&rest args
+				    &key (base-height 500)
+				    (arm-y-offset 0)
+				    &allow-other-keys)
   (if (not (boundp '*ri*))
       (setq *ri* (instance* ur5-interface :init args)))
   (if (not (boundp '*tomato-hand*))
       (setq *tomato-hand* (make-tomato-hand)))
   (if (not (boundp '*tomato-base*))
-      (setq *tomato-base* (make-tomato-base)))
+      (setq *tomato-base* (make-tomato-base :base-height base-height)))
   (if (not (boundp '*ur5*))
       (setq *ur5* (instance ur5-robot :init)))
-  (send *ur5* :locate (float-vector -200 0 500) :world)
+  (send *ur5* :locate (float-vector -200 arm-y-offset base-height) :world)
   (send *tomato-hand* :newcoords
         (send *ur5* :rarm :end-coords :copy-worldcoords))
   (send *ur5* :rarm :end-coords :assoc *tomato-hand*)
