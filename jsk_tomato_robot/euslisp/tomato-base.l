@@ -1,8 +1,8 @@
-(defun make-tomato-base ()
+(defun make-tomato-base (&key (base-height 500))
   (let (base-body hako hako-all hako-off)
-    (setq base-body (make-cube 800 800 500))
+    (setq base-body (make-cube 800 600 base-height))
     (send base-body :set-color :gray)
-    (send base-body :translate (float-vector 0 0 250))
+    (send base-body :translate (float-vector 0 0 (* 0.5 base-height)))
 
     ;; from setup-hrp2-tomato.l
     (setq hako-all (make-cube 250 350 100)) ;;the origin point is located in the center
@@ -11,7 +11,7 @@
     (setq hako (body- hako-all hako-off))
 
     (send hako :set-color :brown)
-    (send hako :translate (float-vector 200 0 550))
+    (send hako :translate (float-vector 200 0 (+ base-height 50)))
 
     (instance bodyset :init
               (make-cascoords)
