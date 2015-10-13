@@ -17,10 +17,12 @@ class PedicelDetector {
   explicit PedicelDetector(cv::Mat& in_image);
   ~PedicelDetector() {}
 
+  void CalcGradient(cv::Mat& out_image);
   void Detect(cv::Mat& out_image);
 
  private:
   cv::Mat in_image_;
+  cv::Mat hsv_image_;
 };
 
 }  // namespace
