@@ -19,8 +19,10 @@
    ()
    (list
     (list
-     (cons :controller-action "/arm_controller/follow_joint_trajectory")
-     (cons :controller-state "/arm_controller/state")
+     ;;(cons :controller-action "/arm_controller/follow_joint_trajectory")
+     (cons :controller-action "/follow_joint_trajectory")
+     ;;(cons :controller-state "/arm_controller/state")
+     (cons :controller-state "/dummy_state")
      (cons :action-type control_msgs::FollowJointTrajectoryAction)
      (cons :joint-names
            (mapcar

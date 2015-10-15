@@ -1,0 +1,16 @@
+<package>
+  <name>jsk_ur_startup</name>
+  <version>1.0.0</version>
+  <description>
+    jsk universal robot starup pakcage
+  </description>
+  <maintainer email="h-yaguchi@jsk.t.u-tokyo.ac.jp">
+    Hiroaki Yaguchi
+  </maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>ur_bringup</run_depend>
+
+</package>
