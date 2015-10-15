@@ -25,76 +25,76 @@ using namespace pcl;
 
 union ParamRGB
 {
-    int data[3];
-    struct {
-        int r;
-        int g;
-        int b;
-    };
+  int data[3];
+  struct {
+    int r;
+    int g;
+    int b;
+  };
 };
 
 union ParamDist
 {
-    float data[2];
-    struct {
-        float min;
-        float max;
-    };
+  float data[2];
+  struct {
+    float min;
+    float max;
+  };
 };
 
 union ParamNoise
 {
-   double data[2];
-   struct {
-        int meank;
-        double Thresh;
-   };
+  double data[2];
+  struct {
+    int meank;
+    double Thresh;
+  };
 
 };
 
 union HSI_SPACE
 {
-    int data[3];
-    struct{
-        int H;
-        int S;
-        int I;
-    };
+  int data[3];
+  struct{
+    int H;
+    int S;
+    int I;
+  };
 };
 
 
 //process
 class TOMATODETECT
 {
-public:
-    explicit TOMATODETECT();
-    ~TOMATODETECT();
+ public:
+  explicit TOMATODETECT();
+  ~TOMATODETECT();
 
-public:
-      pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-      HandCloudFilter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
-      int GetCenter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
-      float Removeoutliner(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud,
-                           Eigen::Vector4f *centroid);
-      std::vector<Eigen::Vector4f> Center_vector;
-      std::vector<pcl::ModelCoefficients> Boundingbox;
-      pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-      CloudIN(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud,
-                     std::string Param);
-private:
-      ParamRGB RGBfilterH;
-      ParamRGB RGBfilterL;
-      ParamDist Distfilter;
-      ParamNoise Noisefilter;
-      HSI_SPACE Assign_HSI(pcl::PointXYZRGB p);
-      //RGB and Distance, return the number of points.
-      unsigned int RGBDfilter();
-      unsigned int NoiseFilter();
-      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudin;
-      unsigned int PCsize;
-      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudout;
-      Eigen::Vector4f LastCenter;
-      int Tracking_flag;
+ public:
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr
+  HandCloudFilter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+  int GetCenter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+  float Removeoutliner(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud,
+                       Eigen::Vector4f *centroid);
+  std::vector<Eigen::Vector4f> Center_vector;
+  std::vector<pcl::ModelCoefficients> Boundingbox;
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr
+  CloudIN(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud,
+          std::string Param);
+ private:
+  ParamRGB RGBfilterH;
+  ParamRGB RGBfilterL;
+  ParamDist Distfilter;
+  ParamNoise Noisefilter;
+  HSI_SPACE Assign_HSI(pcl::PointXYZRGB p);
+  //RGB and Distance, return the number of points.
+  unsigned int RGBDfilter();
+  unsigned int NoiseFilter();
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudin;
+  unsigned int PCsize;
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudout;
+  Eigen::Vector4f LastCenter;
+  int Tracking_flag;
 };
 
 
