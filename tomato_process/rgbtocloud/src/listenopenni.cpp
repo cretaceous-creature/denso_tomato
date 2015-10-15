@@ -16,6 +16,7 @@ RGBToCloudViewer::RGBToCloudViewer(ros::NodeHandle& n, ros::NodeHandle& np) :
     box_switch(true),
     initflag(0),
     Tracktime(0),
+    TrackDist(0.3),
     framecount(2),
     HandeyetoCamera(tf::Transform::getIdentity()),
     frame_divider(0)

@@ -20,9 +20,6 @@
 #include "jsk_recognition_msgs/BoundingBoxArray.h"
 #include "geometry_msgs/PointStamped.h"
 
-#define TrackDist 0.3
-
-
 class RGBToCloudViewer {
  public:
   RGBToCloudViewer(ros::NodeHandle& n, ros::NodeHandle& np);
@@ -96,6 +93,8 @@ class RGBToCloudViewer {
   Eigen::Vector4f Center,Center_last;
   int initflag;
   int Tracktime;
+
+  float TrackDist;
 
   int framecount;
   ros::Publisher pub_centroid;
