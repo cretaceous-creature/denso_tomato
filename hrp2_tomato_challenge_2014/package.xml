@@ -1,0 +1,17 @@
+<package>
+  <name>hrp2_tomato_challenge_2014</name>
+  <version>1.0.0</version>
+  <description>
+    2014 tomato challenge
+  </description>
+  <maintainer email="y-tanaka@jsk.imi.i.u-tokyo.ac.jp">
+    Yoshimaru Tanaka, Chen Xiangyu, Krishneel Chaudhary, Kotaro Nagahama, Hiroaki Yaguchi
+  </maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>hrpsys_ros_bridge_tutorials</build_depend>
+
+  <run_depend>hrpsys_ros_bridge_tutorials</run_depend>
+</package>

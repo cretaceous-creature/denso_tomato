@@ -1,0 +1,29 @@
+#
+# README.org
+# by Kotaro Nagahama
+
+** Starting HRP-2 with tomato-hand
+
+$ roseus setup-hrp2-tomato.l
+
+
+** Controlling HRP-2 from euslisp (after "roseus setup-hrp2-tomato.l")
+
+;; move to the initial pose
+$ (reset-tomato-pose)
+
+;; close the scissors-hand and cut something
+$ (start-cut)
+
+;; open the scissors-hand
+$ (stop-cut)
+
+;; control HRP-2 hand
+$ (move-hand-vi)
+ j [Ret] ;; go downward
+ k [Ret] ;; go upward
+ h [Ret] ;; go left
+ l [Ret] ;; go right
+ f [Ret] ;; go forward
+ b [Ret] ;; go backward
+ q [Ret] ;; quit

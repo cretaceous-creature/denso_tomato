@@ -1,0 +1,42 @@
+<launch>
+  <node name="dynamixel_manager" pkg="dynamixel_controllers"
+        type="controller_manager.py"
+        required="true" output="screen">
+    <rosparam>
+      namespace: dxl_manager
+      serial_ports:
+          scissors_finger_port:
+              port_name: "/dev/ttyUSB0"
+              baud_rate: 1000000
+              min_motor_id: 1
+              max_motor_id: 1
+              update_rate: 20
+    </rosparam>
+  </node>
+
+  <!-- Start scissors joint controller -->
+  <rosparam file="$(find hrp2_tomato_challenge_2014)/config/scissors_controller_config.yaml"
+            command="load"/>
+  <node name="scissors_controller_spawner" pkg="dynamixel_controllers"
+        type="controller_spawner.py"
+        args="--manager=dxl_manager
+              --port scissors_finger_port
+              scissors_controller"
+        output="screen"/>
+
+  <!-- Start joints trajectory controller -->
+  <node name="scissors_trajectory_controller_spawner"
+        pkg="dynamixel_controllers"
+        type="controller_spawner.py"
+        args="--manager=dxl_manager
+              --type=meta
+              scissors_trajectory_controller
+              scissors_controller"
+        output="screen"/>
+
+  <!-- finger angle controller -->
+  <node name="scissors_interface"
+        pkg="hrp2_tomato_challenge_2014"
+        type="scissors_interface.py"
+        output="screen" />
+</launch>

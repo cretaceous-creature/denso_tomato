@@ -1,0 +1,22 @@
+<launch>
+  <include file="$(find turtlebot_bringup)/launch/3dsensor.launch">
+    <arg name="rgb_processing" value="false" />
+    <arg name="depth_registration" value="false" />
+    <arg name="depth_processing" value="true" />
+  </include>
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+    <param name="frame_id" type="string" value="odom" />
+    <param name="base_frame_id" type="string" value="base_footprint" />
+    <param name="resolution" value="0.015" />
+    <!-- <param name="sensor_model/max_range" value="5.0" /> -->
+    <param name="height_map" value="true" />
+    <param name="filter_ground" value="true" /> <!-- important" -->
+    <param name="ground_filter/distance" value="0.05" />
+    <param name="pointcloud_min_z" value="0.025" />
+    <param name="pointcloud_max_z" value="1.75" />
+    <param name="occupancy_min_z" value="-0.01" />
+    <param name="occupancy_max_z" value="1.80" />
+   <remap from="cloud_in" to="/camera/depth/points"/>
+  </node>
+  <!-- <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/> -->
+</launch>
