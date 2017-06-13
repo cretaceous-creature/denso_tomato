@@ -1,0 +1,8 @@
+prefix=/home/chen/Desktop/denso_tomato/tomato_process/build-rgbtocloud-Desktop_Qt_5_6_0_GCC_64bit-Default/devel
+
+Name: rgbtocloud
+Description: Description of rgbtocloud
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/chen/Desktop/denso_tomato/tomato_process/build-rgbtocloud-Desktop_Qt_5_6_0_GCC_64bit-Default/devel/lib 
+Requires: 

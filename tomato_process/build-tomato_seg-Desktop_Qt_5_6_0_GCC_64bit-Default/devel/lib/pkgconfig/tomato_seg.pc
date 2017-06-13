@@ -1,0 +1,8 @@
+prefix=/home/chen/Desktop/denso_tomato/tomato_process/build-tomato_seg-Desktop_Qt_5_6_0_GCC_64bit-Default/devel
+
+Name: tomato_seg
+Description: Description of tomato_seg
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/chen/Desktop/denso_tomato/tomato_process/build-tomato_seg-Desktop_Qt_5_6_0_GCC_64bit-Default/devel/lib 
+Requires: 

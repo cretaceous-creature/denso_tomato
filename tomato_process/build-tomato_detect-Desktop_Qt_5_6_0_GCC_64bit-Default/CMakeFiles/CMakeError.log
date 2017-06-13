@@ -1,0 +1,53 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec2882785425/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2882785425.dir/build.make CMakeFiles/cmTryCompileExec2882785425.dir/build
+make[1]: Entering directory `/home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2882785425.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec2882785425.dir/CheckSymbolExists.c.o   -c /home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec2882785425
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2882785425.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec2882785425.dir/CheckSymbolExists.c.o  -o cmTryCompileExec2882785425 -rdynamic 
+CMakeFiles/cmTryCompileExec2882785425.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec2882785425] Error 1
+make[1]: Leaving directory `/home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec2882785425/fast] Error 2
+
+File /home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec3657773338/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec3657773338.dir/build.make CMakeFiles/cmTryCompileExec3657773338.dir/build
+make[1]: Entering directory `/home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec3657773338.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec3657773338.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec3657773338
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3657773338.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec3657773338.dir/CheckFunctionExists.c.o  -o cmTryCompileExec3657773338 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec3657773338] Error 1
+make[1]: Leaving directory `/home/chen/Desktop/denso_tomato/tomato_process/build-tomato_detect-Desktop_Qt_5_6_0_GCC_64bit-Default/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec3657773338/fast] Error 2
+
+

@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: tomato_seg
+Description: Description of tomato_seg
+Version: 0.0.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: 

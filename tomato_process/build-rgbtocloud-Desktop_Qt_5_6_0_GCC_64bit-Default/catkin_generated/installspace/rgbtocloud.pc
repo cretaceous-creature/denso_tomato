@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: rgbtocloud
+Description: Description of rgbtocloud
+Version: 0.0.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: 
